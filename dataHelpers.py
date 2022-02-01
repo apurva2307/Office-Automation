@@ -5,6 +5,7 @@ frMonth = currentMonth - 4 if currentMonth > 4 else currentMonth + 8
 
 skip = [
     "PU3",
+    "PU30",
     "PU42",
     "PU43",
     "PU44",
@@ -86,4 +87,24 @@ def highUtilStaffCoppy(monthdata, margin):
             and monthdata[pu]["toEndActuals"][-1] > 5000
         ):
             result[pu] = monthdata[pu]["varAcCoppyPercent"][-1]
+    return result
+
+
+def highUtilNonStaffOther(dataOther, margin):
+    result = {}
+    keys = [
+        "D-Traction",
+        "E-Traction",
+        "E-Office",
+        "HSD-Civil",
+        "HSD-Gen",
+        "Lease",
+        "IRFA",
+        "Coach-C",
+        "Station-C",
+        "Colony-C",
+    ]
+    for key in keys:
+        if dataOther[key][-1] > ((frMonth / 12) * 100) + margin:
+            result[key] = dataOther[key][-1]
     return result

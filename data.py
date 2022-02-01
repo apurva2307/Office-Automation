@@ -1,7 +1,6 @@
 from openpyxl import load_workbook
 from dataExtraction.puList import getPUList
 from dataExtraction.helpers import sanitizeValues, sanitizePercentValues
-from decouple import config
 import requests, json
 
 
@@ -75,13 +74,46 @@ def extractDataSummary(filePath):
     wb = load_workbook(filePath, data_only=True)
     detailedPuSheet = wb["Sheet1"]
     result = {}
-    columns = [8, 9, 10, 11, 12, 13, 14, 15]
-    for row in range(5, 75):
-        staff = []
-        nonStaff = []
-        for column in columns:
-            staff = [*staff, detailedPuSheet.cell(5, column).value]
-        result["STAFF"] = sanitizeValues(staff)
+    columns = [3, 6, 8, 9, 10, 11, 12, 13, 14, 15]
+    columns1 = [3, 6, 8, 9, 11, 12, 13]
+    rows = [5, 6, 42, 49, 60, 62, 63, 67, 109, 110, 111, 115, 116, 117]
+    rowsMap = [
+        "Staff",
+        "Non-Staff",
+        "D-Traction",
+        "E-Traction",
+        "E-Office",
+        "HSD-Civil",
+        "HSD-Gen",
+        "Lease",
+        "IRCA",
+        "IRFA",
+        "IRFC",
+        "Coach-C",
+        "Station-C",
+        "Colony-C",
+    ]
+    for index, row in enumerate(rows):
+        data = []
+        if row < 88:
+            for column in columns:
+                if column == 12 or column == 14 or column == 15:
+                    data = [
+                        *data,
+                        round((detailedPuSheet.cell(row, column).value) * 100, 2),
+                    ]
+                else:
+                    data = [*data, round(detailedPuSheet.cell(row, column).value, 2)]
+        else:
+            for column in columns1:
+                if column == 12 or column == 13:
+                    data = [
+                        *data,
+                        round((detailedPuSheet.cell(row, column).value) * 100, 2),
+                    ]
+                else:
+                    data = [*data, round(detailedPuSheet.cell(row, column).value, 2)]
+        result[f"{rowsMap[index]}"] = data
 
     return result
 

@@ -1,4 +1,4 @@
-from data import extractData
+from data import extractData, extractDataSummary
 from docx import Document
 from datetime import datetime
 from puToFullNameMap import puMap
@@ -6,7 +6,8 @@ from dataHelpers import *
 from writingHelpers import *
 from docx.enum.text import WD_ALIGN_PARAGRAPH
 
-monthdata = extractData("OWE-DEC21.xlsx")
+filePath = "OWE-DEC21.xlsx"
+monthdata = extractData(filePath)
 month = "Dec' 21"
 budType = "RG"
 currentMonth = datetime.now().month
@@ -46,11 +47,14 @@ iteratePara(p1, highUtilPuStaff)
 p1.add_run(" Growth over last year is high for ")
 iteratePara(p1, highUtilPuStaffCoppy)
 p1.paragraph_format.alignment = WD_ALIGN_PARAGRAPH.JUSTIFY
+dataOther = extractDataSummary(filePath)
+highUtilPuNonStaffOther = highUtilNonStaffOther(dataOther, 5)
 p2 = document.add_paragraph(
     f"Non-Staff expenditure to end {month} of {nonStaffNet} crore is {nonStaffUtil}% of {budType} and {moreLess(nonStaffVarC)} COPPY by {nonStaffVarC}%. Utilisation of {budType} is high for ",
     style="List Bullet",
 )
 iteratePara(p2, highUtilPuNonStaff)
+print(highUtilPuNonStaffOther)
 p2.add_run(" Growth over last year is high for ")
 iteratePara(p2, highUtilPuNonStaffCoppy)
 p2.paragraph_format.alignment = WD_ALIGN_PARAGRAPH.JUSTIFY
