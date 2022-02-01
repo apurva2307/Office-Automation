@@ -49,13 +49,15 @@ iteratePara(p1, highUtilPuStaffCoppy)
 p1.paragraph_format.alignment = WD_ALIGN_PARAGRAPH.JUSTIFY
 dataOther = extractDataSummary(filePath)
 highUtilPuNonStaffOther = highUtilNonStaffOther(dataOther, 5)
+highUtilPuNonStaffOtherCoppy = highUtilNonStaffOther(dataOther, 5)
 p2 = document.add_paragraph(
     f"Non-Staff expenditure to end {month} of {nonStaffNet} crore is {nonStaffUtil}% of {budType} and {moreLess(nonStaffVarC)} COPPY by {nonStaffVarC}%. Utilisation of {budType} is high for ",
     style="List Bullet",
 )
+iterateParaSumm(p2, highUtilPuNonStaffOther)
 iteratePara(p2, highUtilPuNonStaff)
-print(highUtilPuNonStaffOther)
 p2.add_run(" Growth over last year is high for ")
+iterateParaSumm(p2, highUtilPuNonStaffOtherCoppy)
 iteratePara(p2, highUtilPuNonStaffCoppy)
 p2.paragraph_format.alignment = WD_ALIGN_PARAGRAPH.JUSTIFY
 

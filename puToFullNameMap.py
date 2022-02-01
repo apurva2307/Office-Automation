@@ -57,3 +57,18 @@ def puMap():
         "PU75": "Integrated GST (IGST)",
         "PU99": "Other Expenses (Misc.)",
     }
+
+
+def summaryMap():
+    return {
+        "D-Traction": "Diesel traction",
+        "E-Traction": "Electric traction",
+        "E-Office": "Electricity office",
+        "HSD-Civil": "HSD for track macines",
+        "HSD-Gen": "HSD for Gensets",
+        "Lease": "Lease and other debits",
+        "IRFA": "IRFA debits",
+        "Coach-C": "Coach sanitation",
+        "Station-C": "Station sanitation",
+        "Colony-C": "Colony sanitation",
+    }

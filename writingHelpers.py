@@ -1,6 +1,7 @@
-from puToFullNameMap import puMap
+from puToFullNameMap import puMap, summaryMap
 
 puNameMap = puMap()
+summaryNameMap = summaryMap()
 
 
 def moreLess(data):
@@ -15,3 +16,8 @@ def iteratePara(p, data):
             p.add_run(f"{puNameMap[pu]} ({data[pu]}%) ")
         else:
             p.add_run(f"{puNameMap[pu]} ({data[pu]}%), ")
+
+
+def iterateParaSumm(p, data):
+    for index, value in enumerate(data.keys()):
+        p.add_run(f"{summaryNameMap[value]} ({data[value]}%), ")
