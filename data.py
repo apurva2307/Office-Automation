@@ -201,6 +201,7 @@ def updateToDatabase(month):
 
 if __name__ == "__main__":
     print(extractDataCapex("Capex Review 2021-22.xlsx", "Capex Dec-21"))
+    print("done")
 # if __name__ == "__main__":
 #     months = ["APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"]
 #     for month in months:
