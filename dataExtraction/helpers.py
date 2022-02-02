@@ -8,11 +8,18 @@ def sanitizeValues(array):
     return newArray
 
 
-def sanitizeSingleValue(singleValue):
-    if singleValue == "#DIV/0!" or type(singleValue) == None:
+def sntzSigV(singleValue):
+    if singleValue == "#DIV/0!" or singleValue == None:
         return 0
     else:
-        return singleValue
+        return round(singleValue, 2)
+
+
+def sntzSigVPer(singleValue):
+    if singleValue == "#DIV/0!" or singleValue == None:
+        return 0
+    else:
+        return round(singleValue * 100, 2)
 
 
 def sanitizePercentValues(array):

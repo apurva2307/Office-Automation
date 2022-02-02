@@ -62,3 +62,24 @@ def getPUList():
         "CREDIT",
         "NET",
     ]
+
+
+def getPHs():
+    return ["PH11", "PH14", "PH15"]
+
+
+def getPHsMap():
+    return {
+        "PH11": {
+            "rowRange": list(range(5, 9)),
+            "rowMap": ["CAP", "CAP(CH)", "SF", "TOTAL"],
+        },
+        "PH14": {
+            "rowRange": list(range(10, 12)),
+            "rowMap": ["CAP", "TOTAL"],
+        },
+        "PH15": {
+            "rowRange": list(range(13, 16)),
+            "rowMap": ["CAP", "CAP(RVNL)", "TOTAL"],
+        },
+    }

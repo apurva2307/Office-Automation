@@ -1,10 +1,6 @@
 from openpyxl import load_workbook
-from dataExtraction.puList import getPUList
-from dataExtraction.helpers import (
-    sanitizeValues,
-    sanitizePercentValues,
-    sanitizeSingleValue,
-)
+from dataExtraction.puList import getPUList, getPHs, getPHsMap
+from dataExtraction.helpers import *
 import requests, json
 
 
@@ -31,7 +27,7 @@ def extractData(filePath):
             toEndBp = [*toEndBp, detailedPuSheet.cell(row=i + 1, column=column).value]
             toEndActualsCoppy = [
                 *toEndActualsCoppy,
-                detailedPuSheet.cell(row=i + 2, column=column).value,
+                detailedPuSheet.cell(i + 2, column).value,
             ]
             toEndActuals = [
                 *toEndActuals,
@@ -127,47 +123,51 @@ def extractDataCapex(filePath, sheet):
     detailedPuSheet = wb[sheet]
     result = {}
     columns = [3, 4, 5, 7, 8, 9, 11, 12, 13]
-    phs = ["PH11", "PH14", "PH15"]
-    phsMap = {
-        "PH11": {
-            "rowRange": list(range(5, 8)),
-            "rowMap": ["CAP", "CAP(CH)", "SF", "TOTAL"],
-        },
-        "PH14": {
-            "rowRange": list(range(10, 12)),
-            "rowMap": ["CAP", "TOTAL"],
-        },
-        "PH15": {
-            "rowRange": list(range(13, 16)),
-            "rowMap": ["CAP", "CAP(RVNL)", "TOTAL"],
-        },
-    }
+    phs = getPHs()
+    phsMap = getPHsMap()
 
     def phData(ph, rowRange, rowMap):
         for index, row in enumerate(rowRange):
-            data = []
+            con = []
+            open = []
+            ncr = []
             for column in columns:
-                con = []
                 if column < 6:
                     if column == 5:
-                        con = [*con, detailedPuSheet.cell(row, column).value]
+                        con = [
+                            *con,
+                            sntzSigVPer(detailedPuSheet.cell(row, column).value),
+                        ]
                     else:
-                        con = [*con, detailedPuSheet.cell(row, column).value]
-                open = []
-                if column < 10:
+                        con = [*con, sntzSigV(detailedPuSheet.cell(row, column).value)]
+                if column < 10 and column > 6:
                     if column == 9:
-                        open = [*open, detailedPuSheet.cell(row, column).value]
+                        open = [
+                            *open,
+                            sntzSigVPer(detailedPuSheet.cell(row, column).value),
+                        ]
                     else:
-                        open = [*open, detailedPuSheet.cell(row, column)]
-                ncr = []
-                if column < 14:
+                        open = [
+                            *open,
+                            sntzSigV(detailedPuSheet.cell(row, column).value),
+                        ]
+                if column < 14 and column > 10:
                     if column == 13:
-                        ncr = [*ncr, detailedPuSheet.cell(row, column).value]
+                        ncr = [
+                            *ncr,
+                            sntzSigVPer(detailedPuSheet.cell(row, column).value),
+                        ]
                     else:
-                        ncr = [*ncr, detailedPuSheet.cell(row, column).value]
-            result[f"{ph}"] = {
-                f"{rowMap[index]}": {"open": open, "con": con, "ncr": ncr}
-            }
+                        ncr = [*ncr, sntzSigV(detailedPuSheet.cell(row, column).value)]
+            if index == 0:
+                result[f"{ph}"] = {
+                    f"{rowMap[index]}": {"OPEN": open, "CON": con, "NCR": ncr}
+                }
+            else:
+                result[ph] = {
+                    **result[ph],
+                    f"{rowMap[index]}": {"OPEN": open, "CON": con, "NCR": ncr},
+                }
 
     for ph in phs:
         phData(ph, phsMap[ph]["rowRange"], phsMap[ph]["rowMap"])
@@ -200,8 +200,9 @@ def updateToDatabase(month):
 
 
 if __name__ == "__main__":
-    print(extractDataCapex("Capex Review 2021-22.xlsx", "Capex Dec-21"))
-    print("done")
+    data = extractDataCapex("Capex Review 2021-22.xlsx", "Capex Dec-21")
+    print(data)
+    print(data["PH15"]["CAP"]["OPEN"][-1])
 # if __name__ == "__main__":
 #     months = ["APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"]
 #     for month in months:
