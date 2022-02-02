@@ -138,6 +138,8 @@ def extractDataCapex(filePath, sheet):
                             *con,
                             sntzSigVPer(detailedPuSheet.cell(row, column).value),
                         ]
+                        if ph == "EBR-P":
+                            break
                     else:
                         con = [*con, sntzSigV(detailedPuSheet.cell(row, column).value)]
                 if column < 10 and column > 6:
@@ -160,17 +162,33 @@ def extractDataCapex(filePath, sheet):
                     else:
                         ncr = [*ncr, sntzSigV(detailedPuSheet.cell(row, column).value)]
             if index == 0:
-                result[f"{ph}"] = {
-                    f"{rowMap[index]}": {"OPEN": open, "CON": con, "NCR": ncr}
-                }
+                if ph == "EBR-P":
+                    result[f"{ph}"] = {f"{rowMap[index]}": {"NCR": con}}
+                else:
+                    result[f"{ph}"] = {
+                        f"{rowMap[index]}": {"OPEN": open, "CON": con, "NCR": ncr}
+                    }
             else:
-                result[ph] = {
-                    **result[ph],
-                    f"{rowMap[index]}": {"OPEN": open, "CON": con, "NCR": ncr},
-                }
+                if ph == "EBR-P":
+                    result[ph] = {
+                        **result[ph],
+                        f"{rowMap[index]}": {"NCR": con},
+                    }
+                else:
+                    result[ph] = {
+                        **result[ph],
+                        f"{rowMap[index]}": {"OPEN": open, "CON": con, "NCR": ncr},
+                    }
 
     for ph in phs:
         phData(ph, phsMap[ph]["rowRange"], phsMap[ph]["rowMap"])
+    result["G-TOTAL"] = {
+        "NCR": [
+            sntzSigV(detailedPuSheet.cell(118, 11).value),
+            sntzSigV(detailedPuSheet.cell(118, 12).value),
+            sntzSigVPer(detailedPuSheet.cell(118, 13).value),
+        ]
+    }
     return result
 
 
@@ -186,8 +204,24 @@ def addToDatabase(month):
     return resp.json()
 
 
+def addToDatabaseCapex(filePath, sheet):
+    registerURL = (
+        "https://mydata.apurvasingh.dev/api/v1/telebot/NCRAccountsBot/postData"
+    )
+    data1 = extractDataCapex(filePath, sheet)
+    payload = {
+        "month": "DEC21",
+        "type": "CAPEX",
+        "data1": data1,
+    }
+    resp = requests.post(registerURL, json=payload)
+    return resp.json()
+
+
 def updateToDatabase(month):
-    registerURL = "https://e-commerce-api-apurva.herokuapp.com/api/v1/telebot/NCRAccountsBot/updateData"
+    registerURL = (
+        "https://mydata.apurvasingh.dev/api/v1/telebot/NCRAccountsBot/updateData"
+    )
     data1 = extractData(f"../files/OWE-{month.upper()}.xlsx")
     headers = {"token": "Zr4u7x!A%C*F-JaNdRgUkXp2s5v8y/B?"}
     payload = {
@@ -200,9 +234,9 @@ def updateToDatabase(month):
 
 
 if __name__ == "__main__":
-    data = extractDataCapex("Capex Review 2021-22.xlsx", "Capex Dec-21")
+    data = addToDatabaseCapex("Capex Review 2021-22.xlsx", "Capex Dec-21")
     print(data)
-    print(data["PH15"]["CAP"]["OPEN"][-1])
+    # print(data["EBR-IF"]["TOTAL"]["NCR"])
 # if __name__ == "__main__":
 #     months = ["APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"]
 #     for month in months:
