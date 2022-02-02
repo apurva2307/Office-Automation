@@ -1,6 +1,10 @@
 from openpyxl import load_workbook
 from dataExtraction.puList import getPUList
-from dataExtraction.helpers import sanitizeValues, sanitizePercentValues
+from dataExtraction.helpers import (
+    sanitizeValues,
+    sanitizePercentValues,
+    sanitizeSingleValue,
+)
 import requests, json
 
 
@@ -118,6 +122,58 @@ def extractDataSummary(filePath):
     return result
 
 
+def extractDataCapex(filePath, sheet):
+    wb = load_workbook(filePath, data_only=True)
+    detailedPuSheet = wb[sheet]
+    result = {}
+    columns = [3, 4, 5, 7, 8, 9, 11, 12, 13]
+    phs = ["PH11", "PH14", "PH15"]
+    phsMap = {
+        "PH11": {
+            "rowRange": list(range(5, 8)),
+            "rowMap": ["CAP", "CAP(CH)", "SF", "TOTAL"],
+        },
+        "PH14": {
+            "rowRange": list(range(10, 12)),
+            "rowMap": ["CAP", "TOTAL"],
+        },
+        "PH15": {
+            "rowRange": list(range(13, 16)),
+            "rowMap": ["CAP", "CAP(RVNL)", "TOTAL"],
+        },
+    }
+
+    def phData(ph, rowRange, rowMap):
+        for index, row in enumerate(rowRange):
+            data = []
+            for column in columns:
+                con = []
+                if column < 6:
+                    if column == 5:
+                        con = [*con, detailedPuSheet.cell(row, column).value]
+                    else:
+                        con = [*con, detailedPuSheet.cell(row, column).value]
+                open = []
+                if column < 10:
+                    if column == 9:
+                        open = [*open, detailedPuSheet.cell(row, column).value]
+                    else:
+                        open = [*open, detailedPuSheet.cell(row, column)]
+                ncr = []
+                if column < 14:
+                    if column == 13:
+                        ncr = [*ncr, detailedPuSheet.cell(row, column).value]
+                    else:
+                        ncr = [*ncr, detailedPuSheet.cell(row, column).value]
+            result[f"{ph}"] = {
+                f"{rowMap[index]}": {"open": open, "con": con, "ncr": ncr}
+            }
+
+    for ph in phs:
+        phData(ph, phsMap[ph]["rowRange"], phsMap[ph]["rowMap"])
+    return result
+
+
 def addToDatabase(month):
     registerURL = "https://e-commerce-api-apurva.herokuapp.com/api/v1/telebot/NCRAccountsBot/postData"
     data1 = extractData(f"../files/OWE-{month.upper()}.xlsx")
@@ -144,7 +200,7 @@ def updateToDatabase(month):
 
 
 if __name__ == "__main__":
-    print(extractDataSummary("OWE-DEC21.xlsx"))
+    print(extractDataCapex("Capex Review 2021-22.xlsx", "Capex Dec-21"))
 # if __name__ == "__main__":
 #     months = ["APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"]
 #     for month in months:

@@ -10,13 +10,15 @@ filePath = "OWE-DEC21.xlsx"
 monthdata = extractData(filePath)
 month = "Dec' 21"
 budType = "RG"
+marginExcessBud = 5
+marginExcessCoppy = 20
 currentMonth = datetime.now().month
 frMonth = currentMonth - 4 if currentMonth > 4 else currentMonth + 8
 puNameMap = puMap()
-highUtilPuStaff = highUtilStaff(monthdata, 5)
-highUtilPuStaffCoppy = highUtilStaffCoppy(monthdata, 20)
-highUtilPuNonStaff = highUtilNonStaff(monthdata, 5)
-highUtilPuNonStaffCoppy = highUtilNonStaffCoppy(monthdata, 20)
+highUtilPuStaff = highUtilStaff(monthdata, marginExcessBud)
+highUtilPuStaffCoppy = highUtilStaffCoppy(monthdata, marginExcessCoppy)
+highUtilPuNonStaff = highUtilNonStaff(monthdata, marginExcessBud)
+highUtilPuNonStaffCoppy = highUtilNonStaffCoppy(monthdata, marginExcessCoppy)
 budget, netTotal, budgetUtil, varCPer = getMainData(monthdata, "NET")
 staffBud, staffNet, staffUtil, staffVarC = getMainData(monthdata, "STAFF")
 nonStaffBud, nonStaffNet, nonStaffUtil = (
@@ -48,8 +50,8 @@ p1.add_run(" Growth over last year is high for ")
 iteratePara(p1, highUtilPuStaffCoppy)
 p1.paragraph_format.alignment = WD_ALIGN_PARAGRAPH.JUSTIFY
 dataOther = extractDataSummary(filePath)
-highUtilPuNonStaffOther = highUtilNonStaffOther(dataOther, 5)
-highUtilPuNonStaffOtherCoppy = highUtilNonStaffOther(dataOther, 5)
+highUtilPuNonStaffOther = highUtilNonStaffOther(dataOther, marginExcessBud)
+highUtilPuNonStaffOtherCoppy = highUtilNonStaffOther(dataOther, marginExcessCoppy)
 p2 = document.add_paragraph(
     f"Non-Staff expenditure to end {month} of {nonStaffNet} crore is {nonStaffUtil}% of {budType} and {moreLess(nonStaffVarC)} COPPY by {nonStaffVarC}%. Utilisation of {budType} is high for ",
     style="List Bullet",
@@ -60,5 +62,5 @@ p2.add_run(" Growth over last year is high for ")
 iterateParaSumm(p2, highUtilPuNonStaffOtherCoppy)
 iteratePara(p2, highUtilPuNonStaffCoppy)
 p2.paragraph_format.alignment = WD_ALIGN_PARAGRAPH.JUSTIFY
-
+print(list(range(5, 8)))
 document.save("FR_DEC21.docx")
