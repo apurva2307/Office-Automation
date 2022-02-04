@@ -62,5 +62,4 @@ p2.add_run(" Growth over last year is high for ")
 iterateParaSumm(p2, highUtilPuNonStaffOtherCoppy)
 iteratePara(p2, highUtilPuNonStaffCoppy)
 p2.paragraph_format.alignment = WD_ALIGN_PARAGRAPH.JUSTIFY
-print(list(range(5, 8)))
 document.save("FR_DEC21.docx")
