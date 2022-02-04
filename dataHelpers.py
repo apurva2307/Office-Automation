@@ -19,7 +19,8 @@ skip = [
     "CREDIT",
     "NET",
 ]
-
+def inCrore(value):
+    return round(value/10000,2)
 
 def getMainData(monthdata, param):
     budget = monthdata[param]["budget"][-1]
@@ -127,4 +128,24 @@ def highUtilNonStaffOtherCoppy(dataOther, margin):
     for key in keys:
         if dataOther[key][-2] > ((frMonth / 12) * 100) + margin:
             result[key] = dataOther[key][-2]
+    return result
+def slowProgCapex(dataCapex, sof, margin):
+    result = {}
+    for key in dataCapex.keys():
+        if key in ["TOTAL", "G-TOTAL", "EBR-IF", "EBR-P"]:
+            continue
+        else:
+            if sof in dataCapex[key].keys():
+                if dataCapex[key][sof]['NCR'][-1] < ((frMonth / 12) * 100) - margin:
+                    result[key] = dataCapex[key][sof]['NCR'][-1]
+    return result
+def highProgCapex(dataCapex, sof, margin):
+    result = {}
+    for key in dataCapex.keys():
+        if key in ["TOTAL", "G-TOTAL", "EBR-IF", "EBR-P"]:
+            continue
+        else:
+            if sof in dataCapex[key].keys():
+                if dataCapex[key][sof]['NCR'][-1] > ((frMonth / 12) * 100) + margin:
+                    result[key] = dataCapex[key][sof]['NCR'][-1]
     return result
