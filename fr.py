@@ -12,6 +12,7 @@ month = "Dec' 21"
 budType = "RG"
 marginExcessBud = 5
 marginExcessCoppy = 20
+marginExLessCapex = 5
 currentMonth = datetime.now().month
 frMonth = currentMonth - 4 if currentMonth > 4 else currentMonth + 8
 puNameMap = puMap()
@@ -70,32 +71,15 @@ p3.paragraph_format.alignment = WD_ALIGN_PARAGRAPH.JUSTIFY
 document.add_paragraph("Progress of expenditure under various sources is as under:", style="List Bullet")
 p4 = document.add_paragraph("", style="List Bullet 2")
 p4.add_run('Capital (excluding Suspense):- ').bold = True
-sofWiseSlowMore(dataCapex, p4, "CAP", budType, 5)
+sofWiseSlowMore(dataCapex, p4, "CAP", budType, marginExLessCapex)
 p5 = document.add_paragraph("", style="List Bullet 2")
 p5.add_run('DF:- ').bold = True
-sofWiseSlowMore(dataCapex, p5, "DF", budType, 5)
+sofWiseSlowMore(dataCapex, p5, "DF", budType, marginExLessCapex)
 p6 = document.add_paragraph("", style="List Bullet 2")
 p6.add_run('DRF:- ').bold = True
-sofWiseSlowMore(dataCapex, p6, "DRF", budType, 5)
+sofWiseSlowMore(dataCapex, p6, "DRF", budType, marginExLessCapex)
 p7 = document.add_paragraph("", style="List Bullet 2")
 p7.add_run('RRSK:- ').bold = True
-sofWiseSlowMore(dataCapex, p7, "RRSK", budType, 5)
-# slowProgCapexCap = slowProgCapex(dataCapex, "CAP", 5)
-# highProgCapexCap = highProgCapex(dataCapex, "CAP", 5)
-# p4.add_run(f"Overall expenditure is only 63.20% of {budType}. ")
-# if len(slowProgCapexCap) > len(highProgCapexCap):
-#     p4.add_run("Progress under all Plan Heads is slow except under ")
-#     for index, key in enumerate(highProgCapexCap.keys()):
-#         if index == len(highProgCapexCap)-1:
-#             p4.add_run(f"and {key} where progress is more.")
-#             break
-#         p4.add_run(f"{key}, ")
-# else:
-#     p4.add_run("Progress under all Plan Heads is high except under ")
-#     for index, key in enumerate(slowProgCapexCap.keys()):
-#         if index == len(slowProgCapexCap)-1:
-#             p4.add_run(f"and {key} where progress is slow.")
-#             break
-#         p4.add_run(f"{key}, ")
+sofWiseSlowMore(dataCapex, p7, "RRSK", budType, marginExLessCapex)
 
 document.save("FR_DEC21.docx")
