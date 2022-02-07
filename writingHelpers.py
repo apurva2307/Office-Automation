@@ -32,6 +32,9 @@ def sofWiseSlowMore(dataCapex, p, sof, budType, margin):
     if len(slowProgCapexCap) > len(highProgCapexCap):
         p.add_run("Progress under all Plan Heads is slow except under ")
         for index, key in enumerate(highProgCapexCap.keys()):
+            if len(highProgCapexCap) == 1:
+                p.add_run(f"{key} where progress is more.")
+                break
             if index == len(highProgCapexCap)-1:
                 p.add_run(f"and {key} where progress is more.")
                 break
@@ -39,6 +42,9 @@ def sofWiseSlowMore(dataCapex, p, sof, budType, margin):
     else:
         p.add_run("Progress under all Plan Heads is high except under ")
         for index, key in enumerate(slowProgCapexCap.keys()):
+            if len(slowProgCapexCap) == 1:
+                p.add_run(f"{key} where progress is slow.")
+                break
             if index == len(slowProgCapexCap)-1:
                 p.add_run(f"and {key} where progress is slow.")
                 break
