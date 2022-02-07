@@ -8,6 +8,7 @@ from docx.enum.text import WD_ALIGN_PARAGRAPH
 
 filePath = "OWE-DEC21.xlsx"
 monthdata = extractData(filePath)
+dataCapex = extractDataCapex("Capex Review 2021-22.xlsx", "Capex Dec-21")
 month = "Dec' 21"
 budType = "RG"
 marginExcessBud = 5
@@ -64,22 +65,26 @@ iterateParaSumm(p2, highUtilPuNonStaffOtherCoppy)
 iteratePara(p2, highUtilPuNonStaffCoppy)
 p2.paragraph_format.alignment = WD_ALIGN_PARAGRAPH.JUSTIFY
 document.add_heading("CAPEX:", level=1)
-dataCapex = extractDataCapex("Capex Review 2021-22.xlsx", "Capex Dec-21")
 grossCapex = dataCapex["G-TOTAL"]["NCR"]
-p3 = document.add_paragraph(f"Revised Grant for current year 2021-22 for CAPEX (Gross excluding suspense) is Rs. {inCrore(grossCapex[0])} crore. Expenditure (Gross excluding suspense) to end of {month} is Rs. {inCrore(grossCapex[1])} crore, which is {grossCapex[2]} % of the {budType}.", style="List Bullet")
+p3 = document.add_paragraph(
+    f"Revised Grant for current year 2021-22 for CAPEX (Gross excluding suspense) is Rs. {inCrore(grossCapex[0])} crore. Expenditure (Gross excluding suspense) to end of {month} is Rs. {inCrore(grossCapex[1])} crore, which is {grossCapex[2]} % of the {budType}.",
+    style="List Bullet",
+)
 p3.paragraph_format.alignment = WD_ALIGN_PARAGRAPH.JUSTIFY
-document.add_paragraph("Progress of expenditure under various sources is as under:", style="List Bullet")
+document.add_paragraph(
+    "Progress of expenditure under various sources is as under:", style="List Bullet"
+)
 p4 = document.add_paragraph("", style="List Bullet 2")
-p4.add_run('Capital (excluding Suspense):- ').bold = True
+p4.add_run("Capital (excluding Suspense):- ").bold = True
 sofWiseSlowMore(dataCapex, p4, "CAP", budType, marginExLessCapex)
 p5 = document.add_paragraph("", style="List Bullet 2")
-p5.add_run('DF:- ').bold = True
+p5.add_run("DF:- ").bold = True
 sofWiseSlowMore(dataCapex, p5, "DF", budType, marginExLessCapex)
 p6 = document.add_paragraph("", style="List Bullet 2")
-p6.add_run('DRF:- ').bold = True
+p6.add_run("DRF:- ").bold = True
 sofWiseSlowMore(dataCapex, p6, "DRF", budType, marginExLessCapex)
 p7 = document.add_paragraph("", style="List Bullet 2")
-p7.add_run('RRSK:- ').bold = True
+p7.add_run("RRSK:- ").bold = True
 sofWiseSlowMore(dataCapex, p7, "RRSK", budType, marginExLessCapex)
 
 document.save("FR_DEC21.docx")

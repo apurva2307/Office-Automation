@@ -2,6 +2,9 @@ from openpyxl import load_workbook
 from dataExtraction.puList import getPUList, getPHs, getPHsMap
 from dataExtraction.helpers import *
 import requests, json
+from decouple import config
+
+TOKEN = config("TOKEN")
 
 
 def extractData(filePath):
@@ -194,7 +197,7 @@ def extractDataCapex(filePath, sheet):
 
 def addToDatabase(month):
     registerURL = "https://e-commerce-api-apurva.herokuapp.com/api/v1/telebot/NCRAccountsBot/postData"
-    data1 = extractData(f"../files/OWE-{month.upper()}.xlsx")
+    data1 = extractData(f"./files/OWE-{month.upper()}.xlsx")
     payload = {
         "month": f"{month.upper()}",
         "type": "OWE",
@@ -210,11 +213,26 @@ def addToDatabaseCapex(filePath, sheet):
     )
     data1 = extractDataCapex(filePath, sheet)
     payload = {
-        "month": "DEC21",
+        "month": "JAN22",
         "type": "CAPEX",
         "data1": data1,
     }
     resp = requests.post(registerURL, json=payload)
+    return resp.json()
+
+
+def addToDatabaseCapexUpdate(filePath, sheet):
+    registerURL = (
+        "https://mydata.apurvasingh.dev/api/v1/telebot/NCRAccountsBot/updateData"
+    )
+    data1 = extractDataCapex(filePath, sheet)
+    headers = {"token": TOKEN}
+    payload = {
+        "month": "JAN22",
+        "type": "CAPEX",
+        "data1": data1,
+    }
+    resp = requests.post(registerURL, json=payload, headers=headers)
     return resp.json()
 
 
@@ -223,7 +241,7 @@ def updateToDatabase(month):
         "https://mydata.apurvasingh.dev/api/v1/telebot/NCRAccountsBot/updateData"
     )
     data1 = extractData(f"../files/OWE-{month.upper()}.xlsx")
-    headers = {"token": "Zr4u7x!A%C*F-JaNdRgUkXp2s5v8y/B?"}
+    headers = {"token": TOKEN}
     payload = {
         "month": f"{month.upper()}",
         "type": "OWE",
@@ -233,12 +251,12 @@ def updateToDatabase(month):
     return resp.json()
 
 
-if __name__ == "__main__":
-    data = addToDatabaseCapex("Capex Review 2021-22.xlsx", "Capex Dec-21")
-    print(data)
-    # print(data["EBR-IF"]["TOTAL"]["NCR"])
 # if __name__ == "__main__":
-#     months = ["APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"]
-#     for month in months:
-#         updateToDatabase(f"{month}21")
+#     data = addToDatabaseCapex("Capex Review 2021-22.xlsx", "Capex Jan-22")
+#     print(data)
+# print(data["EBR-IF"]["TOTAL"]["NCR"])
+# if __name__ == "__main__":
+#     # months = ["APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"]
+#     # for month in months:
+#     addToDatabase("JAN22")
 #     print("done")
