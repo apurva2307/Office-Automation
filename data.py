@@ -3,6 +3,7 @@ from dataExtraction.puList import getPUList, getPHs, getPHsMap
 from dataExtraction.helpers import *
 import requests, json
 from decouple import config
+import pandas as pd
 
 TOKEN = config("TOKEN")
 
@@ -255,8 +256,10 @@ def updateToDatabase(month):
 #     data = addToDatabaseCapex("Capex Review 2021-22.xlsx", "Capex Jan-22")
 #     print(data)
 # print(data["EBR-IF"]["TOTAL"]["NCR"])
-# if __name__ == "__main__":
-#     # months = ["APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"]
-#     # for month in months:
-#     addToDatabase("JAN22")
-#     print("done")
+if __name__ == "__main__":
+    # months = ["APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"]
+    # for month in months:
+    # addToDatabase("JAN22")
+    data1 = extractData(f"./files/OWE-JAN22.xlsx")
+    data = pd.DataFrame(data1)
+    print("done")

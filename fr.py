@@ -6,10 +6,11 @@ from dataHelpers import *
 from writingHelpers import *
 from docx.enum.text import WD_ALIGN_PARAGRAPH
 
-filePath = "OWE-DEC21.xlsx"
+FRMonth = "JAN22"
+filePath = f"files/OWE-{FRMonth}.xlsx"
 monthdata = extractData(filePath)
-dataCapex = extractDataCapex("Capex Review 2021-22.xlsx", "Capex Dec-21")
-month = "Dec' 21"
+dataCapex = extractDataCapex("files/Capex Review 2021-22.xlsx", "Capex Jan-22")
+month = "Jan' 22"
 budType = "RG"
 marginExcessBud = 5
 marginExcessCoppy = 20
@@ -25,7 +26,7 @@ budget, netTotal, budgetUtil, varCPer = getMainData(monthdata, "NET")
 staffBud, staffNet, staffUtil, staffVarC = getMainData(monthdata, "STAFF")
 nonStaffBud, nonStaffNet, nonStaffUtil = (
     budget - staffBud,
-    netTotal - staffNet,
+    round((netTotal - staffNet), 2),
     round(((netTotal - staffNet) * 100 / (budget - staffBud)), 2),
 )
 nonStaffCoppy = round(monthdata["NET"]["toEndActualsCoppy"][-1] / 10000, 2) - round(
@@ -33,7 +34,7 @@ nonStaffCoppy = round(monthdata["NET"]["toEndActualsCoppy"][-1] / 10000, 2) - ro
 )
 nonStaffVarC = round(((nonStaffNet - nonStaffCoppy) * 100 / nonStaffCoppy), 2)
 document = Document()
-document.add_heading("NCR Financial Review DEC-2021", level=1)
+document.add_heading(f"NCR Financial Review {FRMonth[:3]}-20{FRMonth[3:]}", level=1)
 document.add_heading("Revenue Expenditure:", level=1)
 document.add_paragraph(
     f"The Revised Grant for Ord. Working Expenses (OWE) 2021-22, excluding suspense is Rs {budget} crore, more than SL by Rs. 430.10 crore and more than last year actuals by only Rs. 889.01 crore (11.37%).",
@@ -87,4 +88,4 @@ p7 = document.add_paragraph("", style="List Bullet 2")
 p7.add_run("RRSK:- ").bold = True
 sofWiseSlowMore(dataCapex, p7, "RRSK", budType, marginExLessCapex)
 
-document.save("FR_DEC21.docx")
+document.save(f"FR_{FRMonth}.docx")

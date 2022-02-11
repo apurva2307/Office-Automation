@@ -1,6 +1,6 @@
 from datetime import datetime
 
-currentMonth = datetime.now().month - 1
+currentMonth = datetime.now().month
 frMonth = currentMonth - 4 if currentMonth > 4 else currentMonth + 8
 
 skip = [
@@ -44,8 +44,11 @@ skip = [
     "CREDIT",
     "NET",
 ]
+
+
 def inCrore(value):
-    return round(value/10000,2)
+    return round(value / 10000, 2)
+
 
 def getMainData(monthdata, param):
     budget = monthdata[param]["budget"][-1]
@@ -154,6 +157,8 @@ def highUtilNonStaffOtherCoppy(dataOther, margin):
         if dataOther[key][-2] > ((frMonth / 12) * 100) + margin:
             result[key] = dataOther[key][-2]
     return result
+
+
 def slowProgCapex(dataCapex, sof, margin):
     result = {}
     for key in dataCapex.keys():
@@ -161,9 +166,11 @@ def slowProgCapex(dataCapex, sof, margin):
             continue
         else:
             if sof in dataCapex[key].keys():
-                if dataCapex[key][sof]['NCR'][-1] < ((frMonth / 12) * 100) - margin:
-                    result[key] = dataCapex[key][sof]['NCR'][-1]
+                if dataCapex[key][sof]["NCR"][-1] < ((frMonth / 12) * 100) - margin:
+                    result[key] = dataCapex[key][sof]["NCR"][-1]
     return result
+
+
 def highProgCapex(dataCapex, sof, margin):
     result = {}
     for key in dataCapex.keys():
@@ -171,6 +178,6 @@ def highProgCapex(dataCapex, sof, margin):
             continue
         else:
             if sof in dataCapex[key].keys():
-                if dataCapex[key][sof]['NCR'][-1] > ((frMonth / 12) * 100) + margin:
-                    result[key] = dataCapex[key][sof]['NCR'][-1]
+                if dataCapex[key][sof]["NCR"][-1] > ((frMonth / 12) * 100) + margin:
+                    result[key] = dataCapex[key][sof]["NCR"][-1]
     return result
