@@ -257,9 +257,7 @@ def updateToDatabase(month):
 #     print(data)
 # print(data["EBR-IF"]["TOTAL"]["NCR"])
 if __name__ == "__main__":
-    # months = ["APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"]
-    # for month in months:
-    # addToDatabase("JAN22")
+    addToDatabase("MAR21")
     data1 = extractData(f"./files/OWE-JAN22.xlsx")
-    data = pd.DataFrame(data1)
+    # data = pd.DataFrame(data1)
     print("done")

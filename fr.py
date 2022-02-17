@@ -8,13 +8,14 @@ from docx.enum.text import WD_ALIGN_PARAGRAPH
 
 FRMonth = "JAN22"
 filePath = f"files/OWE-{FRMonth}.xlsx"
-monthdata = extractData(filePath)
-dataCapex = extractDataCapex("files/Capex Review 2021-22.xlsx", "Capex Jan-22")
 month = "Jan' 22"
 budType = "RG"
 marginExcessBud = 5
 marginExcessCoppy = 20
 marginExLessCapex = 5
+
+monthdata = extractData(filePath)
+dataCapex = extractDataCapex("files/Capex Review 2021-22.xlsx", "Capex Jan-22")
 currentMonth = datetime.now().month
 frMonth = currentMonth - 4 if currentMonth > 4 else currentMonth + 8
 puNameMap = puMap()
