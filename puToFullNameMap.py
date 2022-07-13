@@ -61,14 +61,14 @@ def puMap():
 
 def summaryMap():
     return {
-        "D-Traction": "Diesel traction",
-        "E-Traction": "Electric traction",
-        "E-Office": "Electricity office",
-        "HSD-Civil": "HSD for track macines",
-        "HSD-Gen": "HSD for Gensets",
-        "Lease": "Lease and other debits",
+        "D-TRACTION": "Diesel traction",
+        "E-TRACTION": "Electric traction",
+        "E-OFFICE": "Electricity office",
+        "HSD-CIVIL": "HSD for track macines",
+        "HSD-GEN": "HSD for Gensets",
+        "LEASE": "Lease and other debits",
         "IRFA": "IRFA debits",
-        "Coach-C": "Coach sanitation",
-        "Station-C": "Station sanitation",
-        "Colony-C": "Colony sanitation",
+        "COACH-C": "Coach sanitation",
+        "STATION-C": "Station sanitation",
+        "COLONY-C": "Colony sanitation",
     }

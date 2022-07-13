@@ -1,11 +1,27 @@
 from openpyxl import load_workbook
 from dataExtraction.puList import getPUList, getPHs, getPHsMap
 from dataExtraction.helpers import *
-import requests, json
+import requests, json, jwt, datetime
 from decouple import config
 import pandas as pd
+from dateutil import tz
 
-TOKEN = config("TOKEN")
+
+token = config("TOKEN")
+ncr_data_url = config("NCR_DATA_URL")
+
+
+def gen_token(token):
+    encodedToken = jwt.encode(
+        {
+            "name": "shailendra",
+            "exp": datetime.datetime.now(tz=tz.gettz("Asia/Kolkata"))
+            + datetime.timedelta(seconds=300),
+        },
+        token,
+        algorithm="HS256",
+    )
+    return encodedToken
 
 
 def extractData(filePath):
@@ -102,22 +118,19 @@ def extractDataSummary(filePath):
         if row < 88:
             for column in columns:
                 if column == 12 or column == 14 or column == 15:
-                    data = [
-                        *data,
-                        round((detailedPuSheet.cell(row, column).value) * 100, 2),
-                    ]
+                    data = [*data, sntzSigVPer(detailedPuSheet.cell(row, column).value)]
                 else:
-                    data = [*data, round(detailedPuSheet.cell(row, column).value, 2)]
+                    data = [*data, sntzSigV(detailedPuSheet.cell(row, column).value)]
         else:
             for column in columns1:
                 if column == 12 or column == 13:
                     data = [
                         *data,
-                        round((detailedPuSheet.cell(row, column).value) * 100, 2),
+                        sntzSigVPer(detailedPuSheet.cell(row, column).value),
                     ]
                 else:
-                    data = [*data, round(detailedPuSheet.cell(row, column).value, 2)]
-        result[f"{rowsMap[index]}"] = data
+                    data = [*data, sntzSigV(detailedPuSheet.cell(row, column).value)]
+        result[f"{rowsMap[index].upper()}"] = data
 
     return result
 
@@ -196,6 +209,28 @@ def extractDataCapex(filePath, sheet):
     return result
 
 
+def extract_vital_mod(filePath):
+    path = filePath.split("/")[-1]
+    wb = load_workbook(filePath, data_only=True)
+    vitalSheet = wb[
+        f"VITAL (Ear.+Exp.) {path[10:11]}{path[11:13].lower()}-{path[13:15]}"
+    ]
+    result = {}
+    appToDRF = vitalSheet["V41"].value
+    appToPF = vitalSheet["V42"].value
+    OR = vitalSheet["AJ51"].value
+    ORTgtUptoMonth = vitalSheet["AJ50"].value
+    ORBud = vitalSheet["AJ49"].value
+    result["VITAL"] = {
+        "OR": OR,
+        "ORBUD": ORBud,
+        "ORTGT": ORTgtUptoMonth,
+        "APPTODRF": appToDRF,
+        "APPTOPF": appToPF,
+    }
+    return result
+
+
 def addToDatabase(month):
     registerURL = "https://e-commerce-api-apurva.herokuapp.com/api/v1/telebot/NCRAccountsBot/postData"
     data1 = extractData(f"./files/OWE-{month.upper()}.xlsx")
@@ -205,6 +240,22 @@ def addToDatabase(month):
         "data1": data1,
     }
     resp = requests.post(registerURL, json=payload)
+    return resp.json()
+
+
+def addSummaryToDatabase(month):
+    registerURL = (
+        "https://mydata.apurvasingh.dev/api/v1/telebot/NCRAccountsBot/updateData"
+    )
+    data2 = extractDataSummary(f"./files/OWE-{month.upper()}.xlsx")
+    encodedToken = gen_token(token)
+    headers = {"token": encodedToken}
+    payload = {
+        "month": f"{month.upper()}",
+        "type": "OWE",
+        "data2": data2,
+    }
+    resp = requests.post(registerURL, json=payload, headers=headers)
     return resp.json()
 
 
@@ -227,7 +278,8 @@ def addToDatabaseCapexUpdate(filePath, sheet):
         "https://mydata.apurvasingh.dev/api/v1/telebot/NCRAccountsBot/updateData"
     )
     data1 = extractDataCapex(filePath, sheet)
-    headers = {"token": TOKEN}
+    encodedToken = gen_token(token)
+    headers = {"token": encodedToken}
     payload = {
         "month": "JAN22",
         "type": "CAPEX",
@@ -241,8 +293,9 @@ def updateToDatabase(month):
     registerURL = (
         "https://mydata.apurvasingh.dev/api/v1/telebot/NCRAccountsBot/updateData"
     )
-    data1 = extractData(f"../files/OWE-{month.upper()}.xlsx")
-    headers = {"token": TOKEN}
+    data1 = extractData(f"./files/OWE-{month.upper()}.xlsx")
+    encodedToken = gen_token(token)
+    headers = {"token": encodedToken}
     payload = {
         "month": f"{month.upper()}",
         "type": "OWE",
@@ -252,12 +305,43 @@ def updateToDatabase(month):
     return resp.json()
 
 
-# if __name__ == "__main__":
-#     data = addToDatabaseCapex("Capex Review 2021-22.xlsx", "Capex Jan-22")
-#     print(data)
-# print(data["EBR-IF"]["TOTAL"]["NCR"])
+def updateToDatabaseDiv(month, division):
+    registerURL = (
+        "https://mydata.apurvasingh.dev/api/v1/telebot/NCRAccountsBot/updateData"
+    )
+    data3 = extractData(f"./files/OWE-{month.upper()}-{division.upper()}.xlsx")
+    encodedToken = gen_token(token)
+    headers = {"token": encodedToken}
+    payload = {
+        "month": f"{month.upper()}",
+        "type": "OWE",
+        "data3": {f"{division.upper()}": data3},
+    }
+    resp = requests.post(registerURL, json=payload, headers=headers)
+    return resp.json()
+
+
+def get_owe_data(month):
+    dataURL = f"{ncr_data_url}/getData/{month}/OWE"
+    encodedToken = gen_token(token)
+    headers = {"token": encodedToken}
+    res = requests.get(dataURL, headers=headers).json()
+    if "monthData" in res.keys():
+        return res["monthData"]
+    else:
+        return res
+
+
+def postOweMonthlyData(month):
+    # print(addToDatabase(month))
+    # print(addSummaryToDatabase(month))
+    print(updateToDatabaseDiv(month, "JHS"))
+    print(updateToDatabaseDiv(month, "PRYJ"))
+    print(updateToDatabaseDiv(month, "AGC"))
+
+
 if __name__ == "__main__":
-    addToDatabase("MAR21")
-    data1 = extractData(f"./files/OWE-JAN22.xlsx")
-    # data = pd.DataFrame(data1)
+    postOweMonthlyData("JUN22")
+    # res = updateToDatabaseDiv("APR22", "PRYJ")
+    # print(res)
     print("done")

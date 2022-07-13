@@ -88,5 +88,16 @@ sofWiseSlowMore(dataCapex, p6, "DRF", budType, marginExLessCapex)
 p7 = document.add_paragraph("", style="List Bullet 2")
 p7.add_run("RRSK:- ").bold = True
 sofWiseSlowMore(dataCapex, p7, "RRSK", budType, marginExLessCapex)
+p8 = document.add_paragraph("", style="List Bullet 2")
+p8.add_run("Operating Ratio: ").bold = True
+p8.add_run(
+    f"Adding the {budType} for OWE of Rs. {budget} crores, appropriation to DRF of Rs. 20 crore and Pension fund of Rs. 2612 crore, the target for Gross expenditure (without suspense) for 2021-22 is Rs. 11339.05 crore. With target Gross revenue of Rs. 15470.62 crore, the target for Operating ratio for the year is 73.29%. "
+)
+p8.paragraph_format.alignment = WD_ALIGN_PARAGRAPH.JUSTIFY
+
+p9 = document.add_paragraph(
+    "Operating Ratio to end Jan’22 is 85.66%, more than the target Operating Ratio but less than Operating Ratio of 94% to end Jan’21, when revenues were down due to Covid lockdown."
+)
+p9.paragraph_format.alignment = WD_ALIGN_PARAGRAPH.JUSTIFY
 
 document.save(f"FR_{FRMonth}.docx")

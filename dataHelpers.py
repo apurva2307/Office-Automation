@@ -122,16 +122,16 @@ def highUtilStaffCoppy(monthdata, margin):
 def highUtilNonStaffOther(dataOther, margin):
     result = {}
     keys = [
-        "D-Traction",
-        "E-Traction",
-        "E-Office",
-        "HSD-Civil",
-        "HSD-Gen",
-        "Lease",
+        "D-TRACTION",
+        "E-TRACTION",
+        "E-OFFICE",
+        "HSD-CIVIL",
+        "HSD-GEN",
+        "LEASE",
         "IRFA",
-        "Coach-C",
-        "Station-C",
-        "Colony-C",
+        "COACH-C",
+        "STATION-C",
+        "COLONY-C",
     ]
     for key in keys:
         if dataOther[key][-1] > ((frMonth / 12) * 100) + margin:
@@ -142,16 +142,16 @@ def highUtilNonStaffOther(dataOther, margin):
 def highUtilNonStaffOtherCoppy(dataOther, margin):
     result = {}
     keys = [
-        "D-Traction",
-        "E-Traction",
-        "E-Office",
-        "HSD-Civil",
-        "HSD-Gen",
-        "Lease",
+        "D-TRACTION",
+        "E-TRACTION",
+        "E-OFFICE",
+        "HSD-CIVIL",
+        "HSD-GEN",
+        "LEASE",
         "IRFA",
-        "Coach-C",
-        "Station-C",
-        "Colony-C",
+        "COACH-C",
+        "STATION-C",
+        "COLONY-C",
     ]
     for key in keys:
         if dataOther[key][-2] > ((frMonth / 12) * 100) + margin:
