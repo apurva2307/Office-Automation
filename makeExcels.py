@@ -3,7 +3,8 @@ from data import get_owe_data
 from openpyxl.styles import Alignment
 
 
-def make_excel(month, puList):
+def make_excel(month, puList, isCrore=True):
+    divider = 10000 if isCrore else 1
     res = get_owe_data(month)
     if not res:
         print("No data is available for given input.")
@@ -20,7 +21,7 @@ def make_excel(month, puList):
         lastYear = int(month[3:])
     customSheet = wb["Sheet1"]
     lastYearData = get_owe_data(f"MAR{lastYear}")["data1"]
-    customSheet.cell(1, 10).value = "Fig in crore"
+    customSheet.cell(1, 10).value = "Fig in crore" if isCrore else "Fig in thousand"
     customSheet.cell(3, 2).value = f"20{lastYear-1}-{lastYear}"
     customSheet.cell(3, 3).value = f"20{lastYear}-{lastYear+1}"
     customSheet.cell(3, 4).value = f"{month[:3]}' {int(month[3:])-1}"
@@ -34,11 +35,11 @@ def make_excel(month, puList):
         lastFullYearActuals = lastYearData[pu]["toEndActuals"]
         row = index + 4
         customSheet.cell(row, 1).value = pu
-        customSheet.cell(row, 2).value = round(lastFullYearActuals[-1] / 10000, 2)
-        customSheet.cell(row, 3).value = round(budget[-1] / 10000, 2)
-        customSheet.cell(row, 4).value = round(toEndActualsCoppy[-1] / 10000, 2)
-        customSheet.cell(row, 5).value = round(toEndBp[-1] / 10000, 2)
-        customSheet.cell(row, 6).value = round(toEndActuals[-1] / 10000, 2)
+        customSheet.cell(row, 2).value = round(lastFullYearActuals[-1] / divider, 2)
+        customSheet.cell(row, 3).value = round(budget[-1] / divider, 2)
+        customSheet.cell(row, 4).value = round(toEndActualsCoppy[-1] / divider, 2)
+        customSheet.cell(row, 5).value = round(toEndBp[-1] / divider, 2)
+        customSheet.cell(row, 6).value = round(toEndActuals[-1] / divider, 2)
         customSheet.cell(row, 7).value = f"=F{row}-E{row}"
         customSheet.cell(row, 8).value = f"=G{row}/E{row}"
         customSheet.cell(row, 9).value = f"=F{row}-D{row}"
@@ -151,4 +152,7 @@ def make_excel_month_wise(month, puList, isCrore=True):
 
 
 if __name__ == "__main__":
-    make_excel_month_wise("JUN22", ["PU1", "PU10", "PU11", "PU15", "PU32"], True)
+    make_excel("JUN22", ["PU1", "PU10", "PU11", "PU15", "PU32"], isCrore=True)
+    make_excel_month_wise(
+        "JUN22", ["PU1", "PU10", "PU11", "PU15", "PU32"], isCrore=True
+    )
