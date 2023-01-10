@@ -232,7 +232,9 @@ def extract_vital_mod(filePath):
 
 
 def addToDatabase(month):
-    registerURL = "https://e-commerce-api-apurva.herokuapp.com/api/v1/telebot/NCRAccountsBot/postData"
+    registerURL = (
+        "https://mydata.apurvasingh.dev/api/v1/telebot/NCRAccountsBot/postData"
+    )
     data1 = extractData(f"./files/OWE-{month.upper()}.xlsx")
     payload = {
         "month": f"{month.upper()}",
@@ -306,9 +308,7 @@ def updateToDatabase(month):
 
 
 def updateToDatabaseDiv(month, division):
-    registerURL = (
-        "https://mydata.apurvasingh.dev/api/v1/telebot/NCRAccountsBot/updateData"
-    )
+    registerURL = "c"
     data3 = extractData(f"./files/OWE-{month.upper()}-{division.upper()}.xlsx")
     encodedToken = gen_token(token)
     headers = {"token": encodedToken}
@@ -333,15 +333,17 @@ def get_owe_data(month):
 
 
 def postOweMonthlyData(month):
-    # print(addToDatabase(month))
-    # print(addSummaryToDatabase(month))
+    print(addToDatabase(month))
+    print(addSummaryToDatabase(month))
     print(updateToDatabaseDiv(month, "JHS"))
     print(updateToDatabaseDiv(month, "PRYJ"))
     print(updateToDatabaseDiv(month, "AGC"))
 
 
 if __name__ == "__main__":
-    postOweMonthlyData("JUN22")
+    postOweMonthlyData("DEC22")
+    # res = extractData("./files/OWE-Jun22.xlsx")
+    # print(res)
     # res = updateToDatabaseDiv("APR22", "PRYJ")
     # print(res)
     print("done")

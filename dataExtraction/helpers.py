@@ -3,8 +3,10 @@ def sanitizeValues(array):
     for value in array:
         if value == "#DIV/0!" or not value or value == "#REF!":
             newArray = [*newArray, 0]
-        else:
+        elif type(value) == str:
             newArray = [*newArray, value]
+        else:
+            newArray = [*newArray, round(value, 2)]
     return newArray
 
 

@@ -1,11 +1,23 @@
 from openpyxl import load_workbook, Workbook
 from data import get_owe_data
 from openpyxl.styles import Alignment
+import logging, sys, os, shutil, time, datetime
+
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)
+formatter = logging.Formatter("%(asctime)s:: %(levelname)s: %(message)s")
+file_handler = logging.FileHandler("files/office.log")
+file_handler.setFormatter(formatter)
+logger.addHandler(file_handler)
+stdout_handler = logging.StreamHandler(sys.stdout)
+logger.addHandler(stdout_handler)
 
 
 def make_excel(month, puList, isCrore=True):
     divider = 10000 if isCrore else 1
     res = get_owe_data(month)
+    logger.info(res["data1"]["PU1"]["budget"])
+
     if not res:
         print("No data is available for given input.")
         return
@@ -73,7 +85,6 @@ def make_excel_month_wise(month, puList, isCrore=True):
     else:
         lastYear = int(month[3:])
     lastYearData = get_owe_data(f"MAR{lastYear}")["data1"]
-
     ws.cell(1, 10).value = "Fig in crore" if isCrore else "Fig in Thousand"
     ws.cell(2, 3).value = f"20{lastYear-1}-{lastYear}"
     ws.merge_cells(start_row=2, start_column=3, end_row=2, end_column=numMonths + 3 + 1)
@@ -152,7 +163,15 @@ def make_excel_month_wise(month, puList, isCrore=True):
 
 
 if __name__ == "__main__":
-    make_excel("JUN22", ["PU1", "PU10", "PU11", "PU15", "PU32"], isCrore=True)
-    make_excel_month_wise(
-        "JUN22", ["PU1", "PU10", "PU11", "PU15", "PU32"], isCrore=True
-    )
+    # make_excel("OCT22", ["PU1", "PU10", "PU11", "PU15", "PU32"], isCrore=True)
+    # os.replace("abc.txt", "files/abc.txt")
+
+    # shutil.move("files/abc.txt", "abc.txt")
+    # make_excel_month_wise(
+    #     "OCT22",
+    #     ["PU1", "PU10", "PU11", "PU15", "PU31", "STAFF", "PU32", "PU27", "PU28"],
+    #     isCrore=True,
+    # )
+    print(datetime.datetime.today().date())
+    print(type(f"{datetime.datetime.today().date()}"))
+    pass
