@@ -1,13 +1,10 @@
 import tabula
 from openpyxl import load_workbook, Workbook
 
-# reader = PdfReader("files\RepFinRevControl.pdf")
-# number_of_pages = len(reader.pages)
-# page = reader.pages[0]
-# text = page.extract_text()
-# print(text)
+
 def make_owe_ir(filepath, month):
     tables = tabula.read_pdf(filepath, pages=[1, 2, 3])
+    print(type(tables))
     wb = load_workbook("files\OWE-Review-IR-Master.xlsx")
     sheet = wb["Sheet1"]
     mon = month.split(" ")[0]
@@ -15,7 +12,8 @@ def make_owe_ir(filepath, month):
     sheet.cell(3, 4).value = f"Actuals upto {mon} {int(year) - 1}"
     sheet.cell(3, 5).value = f"Actuals upto {mon} {year}"
     j = 4
-    for i, table in enumerate(tables, start=1):
+    for table in tables:
+        print(type(table))
         table.columns = [
             "Particulars",
             "D-03",
@@ -37,7 +35,7 @@ def make_owe_ir(filepath, month):
         for index in range(len(table)):
             if table.Particulars.iloc[index] in ["TN - TOTAL", "NET"]:
                 continue
-            if table.Particulars.iloc[index] == "BG(SL)":
+            if table.Particulars.iloc[index] == "FMG":
                 sheet.cell(j, 3).value = int(table.Total.iloc[index])
                 sheet.cell(j, 3).number_format = "#,##0"
             if table.Particulars.iloc[index] == "ACT":
@@ -58,7 +56,7 @@ def make_owe_ir(filepath, month):
 
 
 if __name__ == "__main__":
-    make_owe_ir("files\RepFinRevControl.pdf", "DEC 2022")
+    make_owe_ir("files\RepFinRevController.pdf", "March 2023")
 # tabula.convert_into(
 #     "files\RepFinRevControl.pdf", "output.csv", output_format="csv", pages="all"
 # )

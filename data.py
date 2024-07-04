@@ -308,7 +308,9 @@ def updateToDatabase(month):
 
 
 def updateToDatabaseDiv(month, division):
-    registerURL = "c"
+    registerURL = (
+        "https://mydata.apurvasingh.dev/api/v1/telebot/NCRAccountsBot/updateData"
+    )
     data3 = extractData(f"./files/OWE-{month.upper()}-{division.upper()}.xlsx")
     encodedToken = gen_token(token)
     headers = {"token": encodedToken}
@@ -341,7 +343,10 @@ def postOweMonthlyData(month):
 
 
 if __name__ == "__main__":
-    postOweMonthlyData("DEC22")
+    postOweMonthlyData("MAR24")
+    print("done")
+
+    postOweMonthlyData("APR24")
     # res = extractData("./files/OWE-Jun22.xlsx")
     # print(res)
     # res = updateToDatabaseDiv("APR22", "PRYJ")

@@ -6,7 +6,7 @@ from dataHelpers import *
 from writingHelpers import *
 from docx.enum.text import WD_ALIGN_PARAGRAPH
 
-FRMonth = "JAN22"
+FRMonth = "APR24"
 filePath = f"files/OWE-{FRMonth}.xlsx"
 month = "Jan' 22"
 budType = "RG"
