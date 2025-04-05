@@ -32,5 +32,6 @@ def sanitizePercentValues(array):
         elif type(value) == str:
             newArray = [*newArray, value]
         else:
+            print(":: ", value)
             newArray = [*newArray, round(value * 100, 2)]
     return newArray
